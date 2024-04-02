@@ -1,0 +1,87 @@
+import pickle
+
+class Libro:
+    def __init__(self, titulo, autor):
+        self.titulo = titulo
+        self.autor = autor
+        self.disponible = True
+
+class Usuario:
+    def __init__(self, nombre):
+        self.nombre = nombre
+        self.libros_prestados = []
+
+class Biblioteca:
+    def __init__(self):
+        self.libros = []
+        self.usuarios = []
+
+    def agregar_libro(self, titulo, autor):
+        for libro in self.libros:
+            if libro.titulo == titulo and libro.autor == autor:
+                return "El libro ya existe en la biblioteca."
+        nuevo_libro = Libro(titulo, autor)
+        self.libros.append(nuevo_libro)
+        return "Libro agregado con éxito."
+
+    def mostrar_libros(self):
+        for libro in self.libros:
+            print(f'Título: {libro.titulo}, Autor: {libro.autor}, Disponible: {"Sí" if libro.disponible else "No"}')
+
+    def prestar_libro(self, titulo, nombre_usuario):
+        for libro in self.libros:
+            if libro.titulo == titulo:
+                if not libro.disponible:
+                    return "El libro no está disponible."
+                for usuario in self.usuarios:
+                    if usuario.nombre == nombre_usuario:
+                        usuario.libros_prestados.append(libro)
+                        libro.disponible = False
+                        return "Libro prestado con éxito."
+        return "No se pudo prestar el libro."
+
+    def registrar_usuario(self, nombre):
+        for usuario in self.usuarios:
+            if usuario.nombre == nombre:
+                return "El usuario ya está registrado."
+        nuevo_usuario = Usuario(nombre)
+        self.usuarios.append(nuevo_usuario)
+        return "Usuario registrado con éxito."
+
+    def guardar_datos(self):
+        with open('datos_biblioteca.pkl', 'wb') as f:
+            pickle.dump((self.libros, self.usuarios), f)
+        return "Datos guardados con éxito."
+
+    def cargar_datos(self):
+        try:
+            with open('datos_biblioteca.pkl', 'rb') as f:
+                self.libros, self.usuarios = pickle.load(f)
+            return "Datos cargados con éxito."
+        except FileNotFoundError:
+            return "No se encontró el archivo de datos."
+
+    def listar_usuarios(self):
+        for usuario in self.usuarios:
+            print(f'Nombre: {usuario.nombre}')
+
+    def listar_libros_usuario(self, nombre_usuario):
+        for usuario in self.usuarios:
+            if usuario.nombre == nombre_usuario:
+                print(f'Libros prestados a {nombre_usuario}:')
+                for libro in usuario.libros_prestados:
+                    print(f'Título: {libro.titulo}, Autor: {libro.autor}')
+                return
+        print("Usuario no encontrado.")
+
+    def devolver_libro(self, titulo, nombre_usuario):
+        for usuario in self.usuarios:
+            if usuario.nombre == nombre_usuario:
+                for libro in usuario.libros_prestados:
+                    if libro.titulo == titulo:
+                        libro.disponible = True
+                        usuario.libros_prestados.remove(libro)
+                        return "Libro devuelto con éxito."
+        return "No se pudo devolver el libro."
+
+
