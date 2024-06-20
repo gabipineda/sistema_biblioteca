@@ -1,6 +1,6 @@
 # main.py
 import sys
-from datos_biblioteca1 import (agregar_libro, mostrar_libros, prestar_libro, # type: ignore
+from datos_biblioteca import (agregar_libro, mostrar_libros, prestar_libro, # type: ignore
                                 registrar_usuario, guardar_datos, cargar_datos,
                                 listar_usuarios, listar_libros_de_usuarios,
                                 devolver_libro)
